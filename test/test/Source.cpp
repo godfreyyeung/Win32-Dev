@@ -1,4 +1,4 @@
-#define ID_EDITCHILD 100
+
 
 #ifndef UNICODE
 #define UNICODE
@@ -100,7 +100,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		ncm.cbSize = sizeof(NONCLIENTMETRICS);
 
 		static HWND hEdit=CreateWindowEx(
-			WS_EX_CLIENTEDGE,
+			0, // This param sets the extended window style. If I change it from WS_EX_CLIENTEDGE, as the win32dev tut had it,
+			   // to 0 like the MSDN docs have it, I get a borderless text box. Cool!
 			L"EDIT",
 			L"",
 			WS_CHILD|WS_VISIBLE|ES_MULTILINE|ES_AUTOVSCROLL|ES_AUTOHSCROLL,
