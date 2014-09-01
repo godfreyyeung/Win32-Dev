@@ -6,21 +6,27 @@
 
 
 #include <windows.h>
+#include <commctrl.h>
 
 #define WM_CREATE                       0x0001
 #define IDC_MAIN_BUTTON 101 
 
+// not sure where to put the following line.... site says to put it in my project's "resource file"? What resource file?
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "test.exe.manifest"
+
 /* easy. Need to include this to update control styles to current OS user specified theme 
 http://msdn.microsoft.com/en-us/library/windows/desktop/bb773175%28v=vs.85%29.aspx
 */
-#pragma comment(linker,"\"/manifestdependency:type='win32' \
-name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
-processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+//#pragma comment(linker,"\"/manifestdependency:type='win32' \
+//name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+//processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
 {
+
+	InitCommonControls();
     // Register the window class.
     const wchar_t CLASS_NAME[]  = L"Sample Window Class";
     
