@@ -74,6 +74,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+
+	// define handle to button control window here so all cases can access it
+	static HWND hEdit;
+
     switch (uMsg)
     {
 
@@ -99,7 +103,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		NONCLIENTMETRICS ncm;
 		ncm.cbSize = sizeof(NONCLIENTMETRICS);
 
-		static HWND hEdit=CreateWindowEx(
+		hEdit=CreateWindowEx(
 			0, // This param sets the extended window style. If I change it from WS_EX_CLIENTEDGE, as the win32dev tut had it,
 			   // to 0 like the MSDN docs have it, I get a borderless text box. Cool!
 			L"EDIT",
@@ -139,8 +143,31 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
             EndPaint(hwnd, &ps);
         }
+
+	// handle the messages arising from interaction with button/text box
+	case WM_COMMAND:
+		// Examine the lower word of wParam to determine what specific event occured.
+		switch(LOWORD(wParam))
+		{
+			// in case it is the click of the defined button
+			case IDC_MAIN_BUTTON:
+			{
+				LPWSTR buffer[256];
+				SendMessage(
+						hEdit,
+						WM_GETTEXT,
+						sizeof(buffer)/sizeof(buffer[0]),
+						reinterpret_cast<LPARAM>(buffer));
+				MessageBox(NULL,
+						(LPWSTR)buffer,
+						L"Information",
+						MB_ICONINFORMATION);
+			}
+			break;
+		}
+		break;
 	
-        return 0;
+	return 0;
 
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
