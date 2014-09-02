@@ -161,9 +161,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				LPWSTR buffer[256];
 				
-				DWORD  bytesRetrieved, bytesWritten;
-				
-				bytesRetrieved = DWORD(SendMessage(
+				DWORD bytesWritten;
+				LRESULT numCharsRetrieved;
+				numCharsRetrieved = DWORD(SendMessage(
 						hEdit,
 						WM_GETTEXT,
 						sizeof(buffer)/sizeof(buffer[0]),
@@ -173,8 +173,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						L"Information",
 						MB_ICONINFORMATION);*/
 
+				// Getting weird "characters of string cannot be read" in variable inspector window at breakpoints during debug.
+
+
 				HANDLE hFile;
-				hFile = CreateFile(TEXT("textbox.txt"), // specify filename 
+				hFile = CreateFile(TEXT("textbox2.txt"), // specify filename 
 						GENERIC_WRITE,             // open for reading
 						0,                        // do not share
 						NULL,                     // no security
@@ -191,7 +194,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				  }
 
 				// write to the file
-				WriteFile(hFile, buffer, bytesRetrieved, &bytesWritten, NULL);
+
+				// writes correct number of characters (not to little and not extra) but don't know why I need to divide by 2. Seems that numCharsRetrieved * size of a char should do it.
+				WriteFile(hFile, buffer, DWORD((numCharsRetrieved*sizeof(buffer[0]))/2), &bytesWritten, NULL);
 				// close the file
 				CloseHandle(hFile);
 			}
