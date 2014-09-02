@@ -119,10 +119,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			NULL
 		);
 
-		
-		::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0);
-		HFONT hFont = ::CreateFontIndirect(&ncm.lfMessageFont);
-		::SendMessage(hwnd, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
+		// set text box and button font
+		// found in complete code of http://www.win32developer.com/tutorial/windows/windows_tutorial_3.shtm
+		HGDIOBJ hfDefault=GetStockObject(DEFAULT_GUI_FONT);
+		SendMessage(hEdit,
+			WM_SETFONT,
+			(WPARAM)hfDefault,
+			MAKELPARAM(FALSE,0));
+		SendMessage(hWndButton,
+			WM_SETFONT,
+			(WPARAM)hfDefault,
+			MAKELPARAM(FALSE,0));
 	}
 	
 	break;
