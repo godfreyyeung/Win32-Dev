@@ -160,15 +160,40 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case IDC_MAIN_BUTTON:
 			{
 				LPWSTR buffer[256];
-				SendMessage(
+				
+				DWORD  bytesRetrieved, bytesWritten;
+				
+				bytesRetrieved = DWORD(SendMessage(
 						hEdit,
 						WM_GETTEXT,
 						sizeof(buffer)/sizeof(buffer[0]),
-						reinterpret_cast<LPARAM>(buffer));
-				MessageBox(NULL,
+						reinterpret_cast<LPARAM>(buffer)));
+				/*MessageBox(NULL,
 						(LPWSTR)buffer,
 						L"Information",
+						MB_ICONINFORMATION);*/
+
+				HANDLE hFile;
+				hFile = CreateFile(TEXT("textbox.txt"), // specify filename 
+						GENERIC_WRITE,             // open for reading
+						0,                        // do not share
+						NULL,                     // no security
+						OPEN_ALWAYS,            // create new or open an existing
+						FILE_ATTRIBUTE_NORMAL,    // normal file
+						NULL);                    // no attr. template
+
+				if (hFile == INVALID_HANDLE_VALUE)
+				  {
+					 MessageBox(NULL,
+						L"Could not write to file.",
+						L"Information",
 						MB_ICONINFORMATION);
+				  }
+
+				// write to the file
+				WriteFile(hFile, buffer, bytesRetrieved, &bytesWritten, NULL);
+				// close the file
+				CloseHandle(hFile);
 			}
 			break;
 		}
