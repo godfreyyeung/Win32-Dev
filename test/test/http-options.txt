@@ -1,0 +1,40 @@
+Options for sending http request in C:
+
+C++ REST SDK
+http://msdn.microsoft.com/en-us/library/jj950081.aspx
+
+libCurl
+http://stackoverflow.com/questions/1011339/how-do-you-make-a-http-request-with-c
+
+WinSock
+http://stackoverflow.com/questions/1011339/how-do-you-make-a-http-request-with-c
+http://msdn.microsoft.com/en-us/library/windows/desktop/ms738545%28v=vs.85%29.aspx
+
+WinInet:
+http://search.cpan.org/~gsar/libwin32-0.191/Internet/Internet.pm#HTTP_Functions
+     INET HTTPSendRequest Func:
+     http://msdn.microsoft.com/en-us/library/windows/desktop/aa384247%28v=vs.85%29.aspx
+
+WinHTTP:
+http://msdn.microsoft.com/en-us/library/aa384273%28VS.85%29.aspx
+     has asynchronous completion service:
+      http://msdn.microsoft.com/en-us/library/aa383138%28VS.85%29.aspx
+
+------
+
+Seems like C++ REST SDK and libCurl are libraries not specific to windows.
+
+WinSock, WinInet and WinHTTP are for and made by Windows.
+
+
+Winsock > WinInet > WinHTTP?
+
+WinSock built upon WinInet:
+http://social.msdn.microsoft.com/Forums/en-US/6ed7677c-5cc3-486d-88b9-9f8472d1e94b/wininet-vs-winsock-20?forum=vcmfcatl
+
+"With a few exceptions, WinINet is a superset of WinHTTP. When selecting between the two, you should use WinINet, unless you plan to run within a service or service-like process that requires impersonation and session isolation."
+http://msdn.microsoft.com/en-us/library/hh227297%28v=vs.85%29.aspx
+
+
+Full list of networking and internet APIs provided by Windows:
+http://msdn.microsoft.com/en-US/library/windows/desktop/ff818516%28v=vs.85%29.aspx#networking_and_internet
