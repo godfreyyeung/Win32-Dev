@@ -15,6 +15,8 @@
 
 #define DEFAULT_PORT "80" //80 for http
 
+#define DEFAULT_BUFLEN 10000
+
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
@@ -73,7 +75,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	// define handle to button control window here so all cases can access it
 	static HWND hEdit;
-
+	HWND hWndExample;
 	switch (uMsg)
 	{
 
@@ -241,21 +243,58 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 
 
+			int recvbuflen = DEFAULT_BUFLEN;
+
+			char recvbuf[DEFAULT_BUFLEN];
 
 
-			/* Instead of getting addr info by ip address as in the MS docs example...*/
-			// Resolve the server address and port
-			/* iResult = getaddrinfo(argv[1], DEFAULT_PORT, &hints, &result);
-			if (iResult != 0) {
-			printf("getaddrinfo failed: %d\n", iResult);
-			WSACleanup();
-			return 1;
-			}*/
+			// Send an initial buffer
+			iResult = send(ConnectSocket, "GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n", (int)strlen("GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n"), 0);
+			if (iResult == SOCKET_ERROR) {
+				MessageBox(NULL,
+					(LPWSTR)L"Send Failed",
+					L"Information",
+					MB_ICONINFORMATION);
+				closesocket(ConnectSocket);
+				WSACleanup();
+				return 1;
+			}
 
-			/* I will get addr info by looking up hostname as in the StackOverflow example:
-			http://stackoverflow.com/questions/1011339/how-do-you-make-a-http-request-with-c
-			*/
+			//HDC hdc;
+			//PAINTSTRUCT ps;
+			do {
+				iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+				if (iResult > 0){
+					MessageBox(NULL,
+						(LPWSTR)L"Bytes received",
+						L"Information",
+						MB_ICONINFORMATION);
 
+					/*Nope:
+					hdc = BeginPaint(hwnd, &ps);
+					TextOut(hdc, 70, 50, (LPCWSTR)recvbuf, strlen(recvbuf));
+					EndPaint(hwnd, &ps);*/
+
+					//SetWindowText(hWndExample, TEXT("Control string"));
+					hWndExample = CreateWindowEx(0, L"EDIT", (LPCWSTR)recvbuf, WS_VISIBLE | WS_CHILD | ES_LEFT, 10, 10, 100, 100, hwnd, NULL, GetModuleHandle(NULL), NULL);
+					/*MessageBox(NULL,
+						(LPWSTR)recvbuf,
+						L"Information",
+						MB_ICONINFORMATION);*/
+				}
+				else if (iResult == 0){
+				MessageBox(NULL,
+					(LPWSTR)L"Connection closed\n",
+					L"Information",
+					MB_ICONINFORMATION);
+				}
+				else {
+					MessageBox(NULL,
+						(LPWSTR)L"recv failed: %d\n",
+						L"Information",
+						MB_ICONINFORMATION);
+				}
+			} while (iResult > 0);
 
 
 		}
